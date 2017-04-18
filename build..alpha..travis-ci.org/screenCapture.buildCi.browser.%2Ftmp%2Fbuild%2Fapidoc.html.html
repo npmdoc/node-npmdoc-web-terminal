@@ -1,4 +1,4 @@
-<div class="apidocDiv">
+<html><head></head><body><div class="apidocDiv">
 <style>
 /*csslint
 */
@@ -47,17 +47,10 @@
 }
 </style>
 <h1>api documentation for
-    <a
-
-        href="https://github.com/rabchev/web-terminal"
-
-    >web-terminal (v0.7.0)</a>
+    <a href="https://github.com/rabchev/web-terminal">web-terminal (v0.7.0)</a>
 </h1>
 <h4>Web-Terminal is a terminal server that provides remote CLI via standard web browser and HTTP protocol.</h4>
-<div class="apidocSectionDiv"><a
-    href="#apidoc.tableOfContents"
-    id="apidoc.tableOfContents"
-><h1>table of contents</h1></a><ol>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.web-terminal">module web-terminal</a><ol>
 
@@ -131,7 +124,7 @@
         initLogin();
     }
 
-    if (&#x22;function&#x22; === typeof options) {
+    if ("function" === typeof options) {
         fn = options;
         options = {};
     }
@@ -144,7 +137,7 @@
         }
     }
 
-    if (&#x22;string&#x22; === typeof options.port) {
+    if ("string" === typeof options.port) {
         options.port = (+options.port);
     }
 
@@ -152,16 +145,16 @@
         var host = options.interface;
     }
 
-    if (&#x22;number&#x22; === typeof options.port) {
+    if ("number" === typeof options.port) {
         // if a port number is passed
         port = options.port;
 
-        if (options &#x26;&#x26; options.key) {
-            protocol = &#x22;https&#x22;;
-            sPort = (port !== 443) ? &#x22;:&#x22; + port : &#x22;&#x22;;
+        if (options &amp;&amp; options.key) {
+            protocol = "https";
+            sPort = (port !== 443) ? ":" + port : "";
         } else {
-            protocol = &#x22;http&#x22;;
-            sPort = (port !== 80) ? &#x22;:&#x22; + port : &#x22;&#x22;;
+            protocol = "http";
+            sPort = (port !== 80) ? ":" + port : "";
         }
 
         http = require(protocol);
@@ -175,7 +168,7 @@
         }
         standalone = true;
 
-        console.log(util.format(&#x22;Web-Terminal running at %s://localhost%s/terminal&#x22;, protocol, sPort));
+        console.log(util.format("Web-Terminal running at %s://localhost%s/terminal", protocol, sPort));
     }
 
     if (options) {
@@ -183,20 +176,20 @@
     }
 
     if (!config.root) {
-        config.root = &#x22;/terminal&#x22;;
+        config.root = "/terminal";
     }
 
-    server.on(&#x22;request&#x22;, function (req, res) {
+    server.on("request", function (req, res) {
         if (req.url.indexOf(config.root) === 0) {
 
             send(req, req.url.substr(config.root.length))
-                .root(path.normalize(__dirname + &#x22;/../web&#x22;))
-                .on(&#x22;error&#x22;, function (err) {
+                .root(path.normalize(__dirname + "/../web"))
+                .on("error", function (err) {
                     res.statusCode = err.status || 500;
                     res.end(err.message);
                 })
-                .on(&#x22;directory&#x22;, function () {
-                    redirect(res, req.url + &#x22;/&#x22;);
+                .on("directory", function () {
+                    redirect(res, req.url + "/");
                 })
                 .pipe(res);
         } else if (standalone) {
@@ -205,13 +198,13 @@
     });
 
     io = io.listen(server, { log: false });
-    io.sockets.on(&#x22;connection&#x22;, function (socket) {
+    io.sockets.on("connection", function (socket) {
 
         var cwd         = process.cwd(),
             env         = _.clone(process.env),
             home        = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE,
-            linebreak   = &#x22;\n&#x22;, // check if we need to add \r\n for windows
-            promptChar  = process.platform === &#x22;win32&#x22; ? &#x22;&#x3e;&#x22; : &#x22;$&#x22;,
+            linebreak   = "\n", // check if we need to add \r\n for windows
+            promptChar  = process.platform === "win32" ? "&gt;" : "$",
             stdin,
             args,
             cmd,
@@ -222,8 +215,8 @@
             username;
 
         function execCmd(command, shell, terminate) {
-            if (env.WEBT_LOGIN &#x26;&#x26; !user) {
-                socket.emit(&#x22;exit&#x22;, &#x22;login required&#x22;);
+            if (env.WEBT_LOGIN &amp;&amp; !user) {
+                socket.emit("exit", "login required");
                 return;
             }
 
@@ -244,27 +237,27 @@
                 stdin = proc.stdin;
             }
 
-            proc.on(&#x22;error&#x22;, function (err) {
-                if (err.code === &#x22;ENOENT&#x22;) {
-                    err.message = cmd + &#x22;: command not found&#x22;;
+            proc.on("error", function (err) {
+                if (err.code === "ENOENT") {
+                    err.message = cmd + ": command not found";
                 }
-                socket.emit(&#x22;console&#x22;, err.message);
+                socket.emit("console", err.message);
             });
 
-            proc.stdout.setEncoding(&#x22;utf8&#x22;);
-            proc.stdout.on(&#x22;data&#x22;, function (data) {
-                socket.emit(&#x22;console&#x22;, data);
+            proc.stdout.setEncoding("utf8");
+            proc.stdout.on("data", function (data) {
+                socket.emit("console", data);
             });
 
-            proc.stderr.setEncoding(&#x22;utf8&#x22;);
-            proc.stderr.on(&#x22;data&#x22;, function (data) {
-                if (data.indexOf(&#x22;execvp():&#x22;) === 0) {
-                    data = cmd + &#x22;: command not found&#x22;;
+            proc.stderr.setEncoding("utf8");
+            proc.stderr.on("data", function (data) {
+                if (data.indexOf("execvp():") === 0) {
+                    data = cmd + ": command not found";
                 }
-                socket.emit(&#x22;console&#x22;, data);
+                socket.emit("console", data);
             });
 
-            proc.on(&#x22;close&#x22;, function () { ...</pre></li>
+            proc.on("close", function () { ...</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
 
@@ -287,26 +280,26 @@
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">parse = function (commandLine) {
-    &#x22;use strict&#x22;;
+    "use strict";
 
     var i,
-        buffer  = &#x22;&#x22;,
+        buffer  = "",
         args    = [],
         opened,
         escape;
 
-    for (i = 0; i &#x3c; commandLine.length; i++) {
+    for (i = 0; i &lt; commandLine.length; i++) {
         var c = commandLine[i];
 
-        if (c === &#x22; &#x22; &#x26;&#x26; !opened) {
-            if (buffer !== &#x22;&#x22;) {
+        if (c === " " &amp;&amp; !opened) {
+            if (buffer !== "") {
                 args.push(buffer);
-                buffer = &#x22;&#x22;;
+                buffer = "";
             }
             continue;
         }
 
-        if ((c === &#x22;\&#x22;&#x22; || c === &#x22;&#x27;&#x22;) &#x26;&#x26; !escape) {
+        if ((c === "\"" || c === "'") &amp;&amp; !escape) {
             if (c === opened) {
                 opened = null;
             } else {
@@ -315,7 +308,7 @@
             continue;
         }
 
-        if (c === &#x22;\\&#x22; &#x26;&#x26; opened &#x26;&#x26; !escape) {
+        if (c === "\\" &amp;&amp; opened &amp;&amp; !escape) {
             escape = true;
             continue;
         }
@@ -327,7 +320,7 @@
         buffer += c;
     }
 
-    if (buffer !== &#x22;&#x22;) {
+    if (buffer !== "") {
         args.push(buffer);
     }
 
@@ -335,7 +328,7 @@
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
 
-        socket.on(&#x22;console&#x22;, function (command) {
+        socket.on("console", function (command) {
             var i, arg, basePath;
 
             if (stdin) {
@@ -345,9 +338,9 @@ args    = cmdLine.<span class="apidocCodeKeywordSpan">parse</span>(command);
 cmd     = args.splice(0, 1)[0];
 
 switch (cmd) {
-case &#x22;cd&#x22;:
+case "cd":
     arg = args[0];
-    if (arg[0] === &#x22;~&#x22;) {
+    if (arg[0] === "~") {
         basePath = home;
 ...</pre></li>
     </ul>
@@ -367,7 +360,7 @@ case &#x22;cd&#x22;:
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">function ReplStream() {
-    &#x22;use strict&#x22;;
+    "use strict";
 
     if (!(this instanceof ReplStream)) {
         return new ReplStream();
@@ -376,9 +369,9 @@ case &#x22;cd&#x22;:
     stream.Transform.call(this);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-proc.on(&#x22;close&#x22;, function () {
+proc.on("close", function () {
     stdin = null;
-    socket.emit(&#x22;exit&#x22;, &#x22;&#x22;);
+    socket.emit("exit", "");
 });
         }
 
@@ -386,11 +379,11 @@ proc.on(&#x22;close&#x22;, function () {
 var input   = streams.<span class="apidocCodeKeywordSpan">ReplStream</span>(),
     output  = streams.ReplStream();
 
-input.setEncoding(&#x22;utf8&#x22;);
-output.setEncoding(&#x22;utf8&#x22;);
+input.setEncoding("utf8");
+output.setEncoding("utf8");
 
 stdin = input;
-output.on(&#x22;data&#x22;, function (data) {
+output.on("data", function (data) {
 ...</pre></li>
     </ul>
 
@@ -403,3 +396,4 @@ output.on(&#x22;data&#x22;, function (data) {
     ]
 </div>
 </div>
+</body></html>

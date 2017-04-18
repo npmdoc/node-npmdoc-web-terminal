@@ -6,7 +6,7 @@
 <tspan x="10" y="58">node_modules</tspan>
 <tspan x="10" y="74">└─┬ web-terminal@0.7.0 </tspan>
 <tspan x="10" y="90">  ├─┬ authenticate-pam@1.0.2 </tspan>
-<tspan x="10" y="106">  │ └── nan@2.6.1 </tspan>
+<tspan x="10" y="106">  │ └── nan@2.6.2 </tspan>
 <tspan x="10" y="122">  ├─┬ commander@2.9.0 </tspan>
 <tspan x="10" y="138">  │ └── graceful-readlink@1.0.1 </tspan>
 <tspan x="10" y="154">  ├─┬ connect@3.6.0 </tspan>
